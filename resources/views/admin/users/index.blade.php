@@ -47,7 +47,6 @@
                     {{ $users->appends(request()->query())->links() }}
                 </div>
             </div>
-            {{ $products->links() }}
         </div>
     </div>
 @endsection

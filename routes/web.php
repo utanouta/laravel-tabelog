@@ -23,4 +23,15 @@ require __DIR__.'/auth.php';
 
 Route::group(['prefix' => 'admin', 'as' => 'admin.', 'middleware' => 'auth:admin'], function () {
     Route::get('home', [Admin\HomeController::class, 'index'])->name('home');
+    Route::resource('users', Admin\UserController::class)->only(['index', 'show']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['index', 'show']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['create']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['store']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['edit']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['update']);
+    Route::resource('restaurants', Admin\RestaurantController::class)->only(['destroy']);
+    Route::resource('categories', Admin\CategoryController::class)->only(['index']);
+    Route::resource('categories', Admin\CategoryController::class)->only(['store']);
+    Route::resource('categories', Admin\CategoryController::class)->only(['update']);
+    Route::resource('categories', Admin\CategoryController::class)->only(['destroy']);
 });
