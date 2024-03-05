@@ -23,14 +23,14 @@ class RestaurantRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'image' => 'required',
+            'image' => 'max 2048',
             'description' => 'required',
-            'lowest_price' => 'required | integer | min 0 | ',
-            'highest_price' => 'required | integer | min 0 | ',
+            'lowest_price' => 'required | integer | min 0 | lte:highest_price',
+            'highest_price' => 'required | integer | min 0 | gte:lowest_price',
             'postal_code' => 'required|digits:7|numeric',
             'address' => 'required',
-            'opening_time' =>'required',
-            'closing_time' =>'required',
+            'opening_time' =>'required | before:closing_time',
+            'closing_time' =>'required | after:opening_time',
             'seating_capacity' => 'required | integer | min 0',
         ];
     }

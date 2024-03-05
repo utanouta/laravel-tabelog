@@ -9,18 +9,18 @@ use Illuminate\Http\Request;
 class UserController extends Controller
 {
     public function index(Request $request) {
-        $user = User::paginate(15);
+        $users = User::paginate(15);
 
         $keyword = $request->keyword;
 
         if ($keyword !== null) {
-            $user = User::where('name', 'like', "%{$keyword}%")->orWhere('kana', 'like', "%{$keyword}%")->paginate(15);
+            $users = User::where('name', 'like', "%{$keyword}%")->orWhere('kana', 'like', "%{$keyword}%")->paginate(15);
         } else {
-            $user = User::paginate(15);
+            $users = User::paginate(15);
         }
-        $total = $user->total();
+        $total = $users->total();
 
-        return view('admin.users.index', compact('user', 'keyword', 'total'));
+        return view('admin.users.index', compact('users', 'keyword', 'total'));
     }
 
     public function show(User $user) {
