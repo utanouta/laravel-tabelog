@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Restaurant;
+use App\Models\Category;
 use App\Http\Requests\RestaurantRequest;
 
 class RestaurantController extends Controller
@@ -29,16 +30,24 @@ class RestaurantController extends Controller
         return view('admin.restaurants.show', compact('restaurant'));
     }
 
-    public function create()
+    public function create(Category $categories)
     {
-       return view('admin.restaurants.create');
+        $categories = new Category();
+        return view('admin.restaurants.create',compact('categories'));
     }
 
     public function store(RestaurantRequest $request)
     {
+        $restaurant = new Restaurant();
+        $restaurant->name = $request->input('name');
+        if ($request->hasFile('image')) {
+            $image = $request->file('image')->store('public/restaurants');
+            $restaurant->image = basename($image);
+        } else {
+            $restaurant->image = '';
+        }
         $restaurant = new Resraurant();
         $restaurant->name = $request->input('name');
-        $restaurant->image = $request->input('image');
         $restaurant->description = $request->input('description');
         $restaurant->lowest_price = $request->input('lowest_price');
         $restaurant->highest_price = $request->input('highest_price');
@@ -49,20 +58,28 @@ class RestaurantController extends Controller
         $restaurant->seating_capacity = $request->input('seating_capacity');
         $restaurant->save();
 
+        $category_ids = array_filter($request->input('category_ids'));
+        $restaurant->categories()->sync($category_ids);
+
+
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
     }
 
     public function edit(Restaurant $restaurant)
     {
 
-        return view('admin.restaurants.edit', compact('restaurant'));
+        $categories = new Category;
+
+        $category_ids = $restaurant->categories->pluck('id')->toArray();
+
+        return view('admin.restaurants.edit', compact('restaurant', 'category_ids'));
 
     }
 
     public function update(RestaurantRequest $request, Restaurant $restaurants)
     {
        
-        $restaurant = new Resraurant();
+        $restaurant = new Restaurant();
         $restaurant->name = $request->input('name');
         $restaurant->image = $request->input('image');
         $restaurant->description = $request->input('description');

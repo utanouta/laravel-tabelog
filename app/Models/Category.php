@@ -12,4 +12,10 @@ class Category extends Model
     protected $fillable = [
         'name'
     ];
+
+    public function category_restaurant() {
+        return $this->belongsToMany(Restaurant::class)->withTimestamps();
+    }
+
 }
+
