@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Regular_holidays extends Model
+class Regular_holiday extends Model
 {
     use HasFactory;
 
@@ -13,4 +13,9 @@ class Regular_holidays extends Model
         'day',
         'day_index'
     ];
+
+    public function restaurants() {
+        return $this->belongsToMany(Restaurant::class)->withTimestamps();
+    }
 }
+

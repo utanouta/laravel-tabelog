@@ -13,7 +13,7 @@ class Category extends Model
         'name'
     ];
 
-    public function category_restaurant() {
+    public function resutaurants() {
         return $this->belongsToMany(Restaurant::class)->withTimestamps();
     }
 

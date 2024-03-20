@@ -27,7 +27,7 @@ class CompanyController extends Controller
 
     public function update(CompanyRequest $request, Company $company)
     {
-        $company = new Company;
+        
         $company->name = $request->input('name');
         $company->postal_code = $request->input('postal_code');
         $company->address = $request->input('address');

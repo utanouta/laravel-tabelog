@@ -6,7 +6,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Restaurant;
 use App\Models\Category;
-use App\Http\Requests\RestaurantRequest;
+use App\Models\Regular_holiday;
+
 
 class RestaurantController extends Controller
 {
@@ -32,12 +33,25 @@ class RestaurantController extends Controller
 
     public function create(Category $categories)
     {
-        $categories = new Category();
-        return view('admin.restaurants.create',compact('categories'));
+        $categories =Category::all();
+        $regular_holidays =Regular_holiday::all();
+        return view('admin.restaurants.create',compact('categories', 'regular_holidays'));
     }
 
-    public function store(RestaurantRequest $request)
+    public function store(Request $request)
     {
+        $request->validate([
+            'name' => 'required',
+            'image' => 'image | max:2048',
+            'description' => 'required',
+            'lowest_price' => 'required | integer | min:0 | lte:highest_price',
+            'highest_price' => 'required | integer | min:0 | gte:lowest_price',
+            'postal_code' => 'required|digits:7|numeric',
+            'address' => 'required',
+            'opening_time' =>'required | before:closing_time',
+            'closing_time' =>'required | after:opening_time',
+            'seating_capacity' => 'required | integer | min:0',
+        ]);
         $restaurant = new Restaurant();
         $restaurant->name = $request->input('name');
         if ($request->hasFile('image')) {
@@ -46,7 +60,7 @@ class RestaurantController extends Controller
         } else {
             $restaurant->image = '';
         }
-        $restaurant = new Resraurant();
+        
         $restaurant->name = $request->input('name');
         $restaurant->description = $request->input('description');
         $restaurant->lowest_price = $request->input('lowest_price');
@@ -61,6 +75,9 @@ class RestaurantController extends Controller
         $category_ids = array_filter($request->input('category_ids'));
         $restaurant->categories()->sync($category_ids);
 
+        $restaurant = Restaurant::find(1);
+        $restaurant->regular_holidays()->sync($restaurant);
+
 
         return redirect()->route('admin.restaurants.index')->with('flash_message', '店舗を登録しました。');
     }
@@ -68,20 +85,40 @@ class RestaurantController extends Controller
     public function edit(Restaurant $restaurant)
     {
 
-        $categories = new Category;
+        $categories = Category::all();
 
         $category_ids = $restaurant->categories->pluck('id')->toArray();
 
-        return view('admin.restaurants.edit', compact('restaurant', 'category_ids'));
+        $regular_holidays = Regular_holiday::all();
+
+        return view('admin.restaurants.edit', compact('restaurant','categories', 'category_ids', 'regular_holidays'));
 
     }
 
-    public function update(RestaurantRequest $request, Restaurant $restaurants)
+    public function update(Request $request, Restaurant $restaurant)
     {
        
-        $restaurant = new Restaurant();
+        $request->validate([
+            'name' => 'required',
+            'image' => 'image | max:2048',
+            'description' => 'required',
+            'lowest_price' => 'required | integer | min:0 | lte:highest_price',
+            'highest_price' => 'required | integer | min:0 | gte:lowest_price',
+            'postal_code' => 'required|digits:7|numeric',
+            'address' => 'required',
+            'opening_time' =>'required | before:closing_time',
+            'closing_time' =>'required | after:opening_time',
+            'seating_capacity' => 'required | integer | min:0',
+        ]);
+
+        
+        if ($request->hasFile('image')) {
+            $image = $request->file('image')->store('public/restaurants');
+            $restaurant->image = basename($image);
+        };
+
+        
         $restaurant->name = $request->input('name');
-        $restaurant->image = $request->input('image');
         $restaurant->description = $request->input('description');
         $restaurant->lowest_price = $request->input('lowest_price');
         $restaurant->highest_price = $request->input('highest_price');
@@ -91,6 +128,13 @@ class RestaurantController extends Controller
         $restaurant->closing_time = $request->input('closing_time');
         $restaurant->seating_capacity = $request->input('seating_capacity');
         $restaurant->save();
+
+        $restaurant = Restaurant::find(1);
+        $restaurant->categories()->sync($restaurant);
+
+        $restaurant = Restaurant::find(1);
+        $restaurant->Regular_holidays()->sync($restaurant);
+
  
         return redirect()->route('admin.restaurants.show', $restaurant)->with('flash_message', '店舗を編集しました。');
     }
