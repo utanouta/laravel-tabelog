@@ -19,8 +19,6 @@ class TermController extends Controller
     public function edit(Terms $term)
     {
 
-        $term = new Terms;
-
         return view('admin.terms.edit', compact('term'));
 
     }

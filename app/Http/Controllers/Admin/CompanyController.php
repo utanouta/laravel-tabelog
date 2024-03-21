@@ -19,7 +19,7 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
 
-        $company = Company::all();
+        // $company = Company::all();
 
         return view('admin.company.edit', compact('company'));
 
@@ -32,10 +32,10 @@ class CompanyController extends Controller
         $company->postal_code = $request->input('postal_code');
         $company->address = $request->input('address');
         $company->representative = $request->input('representative');
-        $company->establishment_data = $request->input('establishment_data');
+        $company->establishment_date = $request->input('establishment_date');
         $company->capital = $request->input('capital');
         $company->business = $request->input('business');
-        $company->number_of_employeees = $request->input('number_of_employeees');
+        $company->number_of_employees = $request->input('number_of_employees');
         $company->save();
  
         return redirect()->route('admin.company.index', $company)->with('flash_message', '会社概要を編集しました。');
