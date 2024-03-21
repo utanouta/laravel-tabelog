@@ -19,7 +19,7 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
 
-        $company = new Company;
+        $company = Company::all();
 
         return view('admin.company.edit', compact('company'));
 
@@ -27,7 +27,7 @@ class CompanyController extends Controller
 
     public function update(CompanyRequest $request, Company $company)
     {
-        
+
         $company->name = $request->input('name');
         $company->postal_code = $request->input('postal_code');
         $company->address = $request->input('address');
