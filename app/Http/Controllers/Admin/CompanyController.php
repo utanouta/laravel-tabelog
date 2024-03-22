@@ -19,8 +19,6 @@ class CompanyController extends Controller
     public function edit(Company $company)
     {
 
-        // $company = Company::all();
-
         return view('admin.company.edit', compact('company'));
 
     }

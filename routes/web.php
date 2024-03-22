@@ -22,7 +22,7 @@ use App\Http\Controllers\RestaurantController;
 
 Route::group(['middleware' => 'guest:admin'], function () {
     Route::get('/', [HomeController::class, 'index'])->name('home');
-    Route::resource('restaurants', RestaurantController::class);
+    Route::resource('restaurants', RestaurantController::class)->only(['index']);
     Route::resource('user', UserController::class)->only(['index', 'edit', 'update']);
     Route::resource('company', CompanyController::class)->only(['index']);
     Route::resource('terms', TermController::class)->only(['index']);
